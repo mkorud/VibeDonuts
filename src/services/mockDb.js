@@ -57,15 +57,3 @@ export function resetMockDatabase() {
   Object.values(TABLES).forEach((table) => removeStorage(table.key));
   removeStorage(STORAGE_KEYS.settings);
 }
-
-/** Utilitas paginasi generik yang dipakai DataTable & service. */
-export function paginate(rows, page = 1, perPage = 10) {
-  const total = rows.length;
-  const totalPages = Math.max(1, Math.ceil(total / perPage));
-  const safePage = Math.min(Math.max(1, page), totalPages);
-  const start = (safePage - 1) * perPage;
-  return {
-    data: rows.slice(start, start + perPage),
-    meta: { page: safePage, perPage, total, totalPages },
-  };
-}

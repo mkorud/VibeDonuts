@@ -78,8 +78,3 @@ export function truncate(text, maxLength = 96) {
   if (value.length <= maxLength) return value;
   return `${value.slice(0, maxLength).trimEnd()}...`;
 }
-
-/** Buat ID unik sederhana untuk data yang belum tersimpan di database. */
-export function createId(prefix = 'id') {
-  return `${prefix}_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`;
-}

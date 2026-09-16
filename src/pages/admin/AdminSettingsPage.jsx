@@ -73,26 +73,29 @@ export function AdminSettingsPage() {
 
       <SettingsForm settings={settings} onSave={handleSave} isSaving={isSaving} />
 
-      {/* Zona berbahaya — reset seluruh data ke kondisi demo awal */}
-      <section className="rounded-card border border-rose-200 bg-rose-50 p-5 sm:p-6">
-        <h2 className="text-base font-bold text-rose-700">Reset Data Demo</h2>
-        <p className="mt-1.5 text-sm leading-relaxed text-rose-600">
-          Menghapus permanen SEMUA data di Supabase — pesanan, produk, kategori, dan riwayat stok —
-          lalu mengisi ulang data demo: 3 donat contoh (stok normal, menipis, habis), 3 pesanan
-          contoh beserta riwayatnya, dan pengaturan toko awal. Gunakan hanya untuk demo/latihan,
-          bukan di toko yang sudah berjalan sungguhan.
-        </p>
+      {/* Zona berbahaya — hanya tampil di mode pengembangan (import.meta.env.DEV),
+          agar tidak bisa diakses dari build produksi */}
+      {import.meta.env.DEV ? (
+        <section className="rounded-card border border-rose-200 bg-rose-50 p-5 sm:p-6">
+          <h2 className="text-base font-bold text-rose-700">Reset Data Demo</h2>
+          <p className="mt-1.5 text-sm leading-relaxed text-rose-600">
+            Menghapus permanen SEMUA data di Supabase — pesanan, produk, kategori, dan riwayat stok —
+            lalu mengisi ulang data demo: 3 donat contoh (stok normal, menipis, habis), 3 pesanan
+            contoh beserta riwayatnya, dan pengaturan toko awal. Gunakan hanya untuk demo/latihan,
+            bukan di toko yang sudah berjalan sungguhan.
+          </p>
 
-        <Button
-          variant="danger"
-          className="mt-4"
-          onClick={() => setIsResetOpen(true)}
-          isLoading={isResetting}
-          iconLeft={<IconRefresh className="h-4 w-4" />}
-        >
-          Reset Data Demo
-        </Button>
-      </section>
+          <Button
+            variant="danger"
+            className="mt-4"
+            onClick={() => setIsResetOpen(true)}
+            isLoading={isResetting}
+            iconLeft={<IconRefresh className="h-4 w-4" />}
+          >
+            Reset Data Demo
+          </Button>
+        </section>
+      ) : null}
 
       <ConfirmDialog
         isOpen={isResetOpen}

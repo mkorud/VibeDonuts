@@ -38,45 +38,46 @@ export function CartProvider({ children }) {
       }
 
       const qty = Math.max(1, Math.trunc(Number(jumlah) || 1));
+      const existing = items.find((item) => String(item.product_id) === String(product.id));
+      const currentQty = existing ? existing.jumlah : 0;
+      const requested = currentQty + qty;
+      const limit = Math.min(product.stok, MAX_QTY_PER_ITEM);
+      const finalQty = Math.min(requested, limit);
 
-      setItems((current) => {
-        const existing = current.find((item) => String(item.product_id) === String(product.id));
-        const currentQty = existing ? existing.jumlah : 0;
-        const requested = currentQty + qty;
-        const limit = Math.min(product.stok, MAX_QTY_PER_ITEM);
-        const finalQty = Math.min(requested, limit);
+      // QA (P2-1): pemberitahuan dihitung DI LUAR updater setItems agar fungsi
+      // state tetap murni (tanpa side effect) — aman terhadap StrictMode.
+      if (finalQty === currentQty) {
+        info(
+          product.stok <= currentQty
+            ? `Stok ${product.nama} tinggal ${product.stok} buah.`
+            : `Maksimal ${MAX_QTY_PER_ITEM} buah per produk dalam satu pesanan.`,
+        );
+        return;
+      }
 
-        if (finalQty === currentQty) {
-          info(
-            product.stok <= currentQty
-              ? `Stok ${product.nama} tinggal ${product.stok} buah.`
-              : `Maksimal ${MAX_QTY_PER_ITEM} buah per produk dalam satu pesanan.`,
-          );
-          return current;
-        }
+      const snapshot = {
+        product_id: product.id,
+        nama: product.nama,
+        slug: product.slug,
+        harga: product.harga,
+        url_foto: product.url_foto,
+        stok: product.stok,
+        jumlah: finalQty,
+      };
 
-        if (finalQty < requested) {
-          info(`Jumlah ${product.nama} disesuaikan dengan sisa stok (${finalQty} buah).`);
-        } else {
-          success(`${product.nama} ditambahkan ke keranjang.`);
-        }
+      setItems(
+        existing
+          ? items.map((item) => (item.product_id === product.id ? snapshot : item))
+          : [...items, snapshot],
+      );
 
-        const snapshot = {
-          product_id: product.id,
-          nama: product.nama,
-          slug: product.slug,
-          harga: product.harga,
-          url_foto: product.url_foto,
-          stok: product.stok,
-          jumlah: finalQty,
-        };
-
-        return existing
-          ? current.map((item) => (item.product_id === product.id ? snapshot : item))
-          : [...current, snapshot];
-      });
+      if (finalQty < requested) {
+        info(`Jumlah ${product.nama} disesuaikan dengan sisa stok (${finalQty} buah).`);
+      } else {
+        success(`${product.nama} ditambahkan ke keranjang.`);
+      }
     },
-    [setItems, success, error, info],
+    [items, setItems, success, error, info],
   );
 
   /** Ubah jumlah sebuah item (PRD K-3). */
