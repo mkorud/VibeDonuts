@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "npm install --include=dev",
-  "buildCommand": "vite build && echo '--- VERIFIKASI OUTPUT BUILD ---' && ls -la dist",
+  "buildCommand": "vite build && cp dist/index.html dist/404.html && echo '--- VERIFIKASI OUTPUT BUILD (fallback 404.html siap) ---' && ls -la dist",
   "outputDirectory": "dist",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
   "headers": [
