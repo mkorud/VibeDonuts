@@ -1,0 +1,193 @@
+@import 'tailwindcss';
+
+/* ==========================================================================
+   VibeDonuts - Design Token (Tailwind CSS v4)
+   Palet: pastel hangat (blush / butter) + cokelat (cocoa) + krem (cream).
+   Token di bawah otomatis membuat utility: bg-cocoa-600, text-blush-500, dst.
+   ========================================================================== */
+@theme {
+  /* Krem - warna dasar halaman */
+  --color-cream-50: #fffdf9;
+  --color-cream-100: #fff8ee;
+  --color-cream-200: #fbeeda;
+  --color-cream-300: #f4dfc3;
+  --color-cream-400: #eacba5;
+
+  /* Cokelat - warna brand utama & tipografi */
+  --color-cocoa-50: #faf6f2;
+  --color-cocoa-100: #f2e8df;
+  --color-cocoa-200: #e2cdba;
+  --color-cocoa-300: #cbaa8d;
+  --color-cocoa-400: #b08661;
+  --color-cocoa-500: #94663f;
+  --color-cocoa-600: #774f2f;
+  --color-cocoa-700: #5c3c25;
+  --color-cocoa-800: #422b1c;
+  --color-cocoa-900: #2e1e14;
+
+  /* Blush - pastel hangat (merah muda / koral lembut) */
+  --color-blush-50: #fff6f3;
+  --color-blush-100: #ffe7df;
+  --color-blush-200: #ffd0c1;
+  --color-blush-300: #ffb29c;
+  --color-blush-400: #fb9075;
+  --color-blush-500: #ef6f51;
+  --color-blush-600: #d5533a;
+
+  /* Butter - pastel kuning hangat untuk aksen */
+  --color-butter-50: #fffaeb;
+  --color-butter-100: #fef0c7;
+  --color-butter-200: #fde08a;
+  --color-butter-300: #fbcc4f;
+  --color-butter-400: #f0b32a;
+
+  /* Tipografi */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  /* Bentuk & bayangan khas VibeDonuts */
+  --radius-card: 1.25rem;
+  --radius-blob: 2.5rem;
+  --shadow-soft: 0 12px 32px -16px rgb(66 43 28 / 0.22);
+  --shadow-lift: 0 24px 48px -24px rgb(66 43 28 / 0.3);
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-cream-100);
+    color: var(--color-cocoa-800);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--color-cocoa-900);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-cocoa-500);
+    outline-offset: 2px;
+  }
+}
+
+/* ==========================================================================
+   Helper class (dipakai lintas komponen)
+   ========================================================================== */
+@layer components {
+  .container-page {
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .container-page {
+      padding-inline: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .container-page {
+      padding-inline: 2rem;
+    }
+  }
+
+  /* Sembunyikan scrollbar horizontal pada filter kategori di layar kecil */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   Animasi ringan (dibuat manual agar tidak bergantung token animasi)
+   ========================================================================== */
+@keyframes vd-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes vd-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes vd-slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes vd-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.vd-float {
+  animation: vd-float 6s ease-in-out infinite;
+}
+
+.vd-fade-up {
+  animation: vd-fade-up 0.5s ease-out both;
+}
+
+.vd-slide-in-right {
+  animation: vd-slide-in-right 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.vd-toast-in {
+  animation: vd-toast-in 0.22s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vd-float,
+  .vd-fade-up,
+  .vd-slide-in-right,
+  .vd-toast-in {
+    animation: none;
+  }
+}
