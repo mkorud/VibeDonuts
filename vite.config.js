@@ -14,5 +14,10 @@ export default defineConfig({
     outDir: 'dist',
     emptyOutDir: true,
     sourcemap: false,
+    // Chunk per-halaman sudah dipecah lewat React.lazy di App.jsx (bukti: log
+    // build memuat chunk terpisah per halaman). Ambang 600 kB dipilih karena
+    // chunk entry memuat inti aplikasi (React, Supabase, router) yang memang
+    // dibutuhkan semua halaman — bukan kode yang belum dipecah.
+    chunkSizeWarningLimit: 600,
   },
 });
