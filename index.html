@@ -5,6 +5,16 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#FFF8EE" />
+    <!--
+      Security headers (fallback via meta — tetap aktif walau header HTTP dari
+      vercel.json tidak terpasang). Catatan: bila URL Supabase berubah proyek,
+      sesuaikan juga connect-src di bawah.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://adcenxkmofzagghsrerm.supabase.co wss://adcenxkmofzagghsrerm.supabase.co; object-src 'none'; base-uri 'self'"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta
       name="description"
       content="VibeDonuts - donat premium handmade. Lihat stok terbaru, pesan online, diantar ke depan pintu."
