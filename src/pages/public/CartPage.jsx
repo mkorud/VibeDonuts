@@ -20,6 +20,10 @@ export function CartPage() {
     isEmpty,
     subtotal,
     totalItems,
+    diskon,
+    kupon,
+    applyKupon,
+    removeKupon,
     updateQuantity,
     removeItem,
     clearCart,
@@ -82,6 +86,9 @@ export function CartPage() {
             subtotal={subtotal}
             ongkosKirim={ongkosKirim}
             totalItems={totalItems}
+            kupon={kupon}
+            onApplyKupon={applyKupon}
+            onRemoveKupon={removeKupon}
             note={`Ongkos kirim ${formatRupiah(ongkosKirim)} berlaku flat. Total akhir dikonfirmasi ulang saat pesanan dibuat.`}
           >
             <Button

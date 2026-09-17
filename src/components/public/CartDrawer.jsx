@@ -21,6 +21,10 @@ export function CartDrawer() {
     closeCart,
     subtotal,
     totalItems,
+    diskon,
+    kupon,
+    applyKupon,
+    removeKupon,
     updateQuantity,
     removeItem,
   } = useCart();
@@ -112,6 +116,9 @@ export function CartDrawer() {
                 subtotal={subtotal}
                 ongkosKirim={ongkosKirim}
                 totalItems={totalItems}
+                kupon={kupon}
+                onApplyKupon={applyKupon}
+                onRemoveKupon={removeKupon}
                 className="p-0 shadow-none ring-0"
                 note="Ongkos kirim flat untuk area Kudus. Konfirmasi alamat saat checkout."
               >

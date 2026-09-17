@@ -7,6 +7,7 @@ const PREFIX = 'vibedonuts';
 
 export const STORAGE_KEYS = {
   cart: `${PREFIX}.cart.v1`,
+  kupon: `${PREFIX}.kupon.v1`,
   auth: `${PREFIX}.auth.v1`,
   products: `${PREFIX}.products.v1`,
   categories: `${PREFIX}.categories.v1`,

@@ -11,7 +11,7 @@ import { Button } from '../../components/common/Button';
 import { Input } from '../../components/common/Input';
 import { Loading } from '../../components/common/Loading';
 import { EmptyState } from '../../components/common/EmptyState';
-import { IconCheckCircle, IconReceipt, IconWhatsapp } from '../../components/common/Icons';
+import { IconCheckCircle, IconReceipt, IconTag, IconWhatsapp } from '../../components/common/Icons';
 
 /** Halaman konfirmasi & instruksi pembayaran (PRD K-6 & K-7). */
 export function OrderSuccessPage() {
@@ -113,9 +113,18 @@ export function OrderSuccessPage() {
               {formatRupiah(order.total_bayar)}
             </p>
             <p className="mt-1 text-xs text-cocoa-400">
-              {formatRupiah(order.total_barang)} barang + {formatRupiah(order.ongkos_kirim)} ongkos
-              kirim
+              {formatRupiah(order.total_barang)} barang
+              {Number(order.diskon) > 0 ? ` - ${formatRupiah(order.diskon)} diskon kupon` : ''} +{' '}
+              {formatRupiah(order.ongkos_kirim)} ongkos kirim
             </p>
+
+            {/* Kupon promo yang dipakai (mini-challenge) — nilainya dihitung server */}
+            {Number(order.diskon) > 0 || order.kode_kupon ? (
+              <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700 ring-1 ring-emerald-100">
+                <IconTag className="h-3.5 w-3.5" />
+                Kupon {order.kode_kupon || 'promo'} aktif - hemat {formatRupiah(order.diskon)}
+              </span>
+            ) : null}
 
             <dl className="mt-5 space-y-2.5 rounded-xl bg-cream-100 p-4 text-sm">
               <div className="flex justify-between gap-3">

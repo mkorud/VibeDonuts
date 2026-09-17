@@ -374,3 +374,11 @@ Isi awal: `ongkos_kirim`, `nomor_rekening`, `nama_bank`, `atas_nama`, `whatsapp_
 | Slug | Versi nama yang ramah alamat web (contoh: `donat-tiramisu`) |
 | Hash | Cara mengacak kata sandi agar tidak terbaca siapa pun |
 | Validasi | Pengecekan agar data yang masuk benar dan masuk akal |
+
+---
+
+## Fitur Tambahan (Mini-Challenge Kelulusan)
+- Menyediakan kolom input teks kupon promo pada komponen antarmuka keranjang belanja pengguna.
+- Sistem wajib memvalidasi kecocokan kode kupon input.
+- Jika pengguna memasukkan kode kupon yang valid (yaitu: "VIBE20"), sistem secara otomatis menghitung pemotongan harga sebesar 20% dari total biaya belanja.
+- Menampilkan notifikasi visual status sukses/gagal penerapan kupon yang menarik di layar.

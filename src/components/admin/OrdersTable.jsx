@@ -222,6 +222,16 @@ export function OrderDetailModal({ isOpen, onClose, order }) {
                   {formatRupiah(order.total_barang)}
                 </td>
               </tr>
+              {Number(order.diskon) > 0 ? (
+                <tr>
+                  <td colSpan={2} className="px-4 pb-2 font-semibold text-emerald-600">
+                    Diskon kupon{order.kode_kupon ? ` (${order.kode_kupon})` : ''}
+                  </td>
+                  <td className="px-4 pb-2 text-right font-bold text-emerald-600">
+                    - {formatRupiah(order.diskon)}
+                  </td>
+                </tr>
+              ) : null}
               <tr>
                 <td colSpan={2} className="px-4 pb-2 text-cocoa-500">
                   Ongkos kirim

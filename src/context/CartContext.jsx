@@ -3,6 +3,7 @@ import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useToast } from '../hooks/useToast';
 import { STORAGE_KEYS } from '../lib/storage';
 import { MAX_QTY_PER_ITEM } from '../lib/constants';
+import { cariKupon, hitungDiskon } from '../lib/coupons';
 
 export const CartContext = createContext(null);
 
@@ -16,12 +17,42 @@ export const CartContext = createContext(null);
  */
 export function CartProvider({ children }) {
   const [storedItems, setItems, resetCart] = useLocalStorage(STORAGE_KEYS.cart, []);
+  const [storedKupon, setKupon] = useLocalStorage(STORAGE_KEYS.kupon, null);
   const [isOpen, setIsOpen] = useState(false);
   const { success, error, info } = useToast();
 
   // Bila data di localStorage korup (bukan array), perlakukan sebagai keranjang kosong
   // agar aplikasi tetap jalan dan tidak layar putih.
   const items = Array.isArray(storedItems) ? storedItems : [];
+  // Kupon promo aktif (mini-challenge) — bertahan seperti isi keranjang (PRD K-2).
+  const kupon = storedKupon && storedKupon.kode ? storedKupon : null;
+
+  /** Terapkan kupon — hasil dikembalikan agar UI menampilkan notifikasi sukses/gagal. */
+  const applyKupon = useCallback(
+    (kode) => {
+      const kuponDitemukan = cariKupon(kode);
+
+      if (!kuponDitemukan) {
+        const salah = String(kode ?? '').trim().toUpperCase();
+        return {
+          ok: false,
+          pesan: `Kupon "${salah || '(kosong)'}" tidak valid. Coba kode kupon resmi kami.`,
+        };
+      }
+
+      setKupon(kuponDitemukan);
+      return {
+        ok: true,
+        pesan: `Kupon ${kuponDitemukan.kode} berhasil diterapkan — potongan ${kuponDitemukan.persen}%!`,
+      };
+    },
+    [setKupon],
+  );
+
+  /** Lepas kupon yang sedang aktif. */
+  const removeKupon = useCallback(() => {
+    setKupon(null);
+  }, [setKupon]);
 
   const openCart = useCallback(() => setIsOpen(true), []);
   const closeCart = useCallback(() => setIsOpen(false), []);
@@ -141,7 +172,8 @@ export function CartProvider({ children }) {
   /** Kosongkan keranjang (dipakai setelah checkout berhasil). */
   const clearCart = useCallback(() => {
     resetCart();
-  }, [resetCart]);
+    setKupon(null); // Kupon dikonsumsi/dikosongkan bersama isi keranjang
+  }, [resetCart, setKupon]);
 
   const totalItems = useMemo(
     () => items.reduce((sum, item) => sum + item.jumlah, 0),
@@ -153,6 +185,13 @@ export function CartProvider({ children }) {
     [items],
   );
 
+  /**
+   * Potongan rupiah dari kupon aktif (mini-challenge).
+   * Sengaja ditaruh setelah `subtotal` agar tidak menabrak TDZ `const`,
+   * dan rumusnya sama dengan fungsi database `vd_create_order`.
+   */
+  const diskon = useMemo(() => hitungDiskon(subtotal, kupon), [subtotal, kupon]);
+
   const hasItem = useCallback(
     (productId) => items.some((item) => String(item.product_id) === String(productId)),
     [items],
@@ -163,6 +202,8 @@ export function CartProvider({ children }) {
       items,
       totalItems,
       subtotal,
+      diskon,
+      kupon,
       isEmpty: items.length === 0,
       isOpen,
       openCart,
@@ -175,11 +216,15 @@ export function CartProvider({ children }) {
       removeItem,
       clearCart,
       hasItem,
+      applyKupon,
+      removeKupon,
     }),
     [
       items,
       totalItems,
       subtotal,
+      diskon,
+      kupon,
       isOpen,
       openCart,
       closeCart,
@@ -191,6 +236,8 @@ export function CartProvider({ children }) {
       removeItem,
       clearCart,
       hasItem,
+      applyKupon,
+      removeKupon,
     ],
   );
 

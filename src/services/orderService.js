@@ -35,7 +35,7 @@ function translateError(error, fallbackMessage) {
 
   if (code === 'P0001' || code === 'P0002') return raw || fallbackMessage;
   if (code === 'PGRST202' || /could not find the function/i.test(raw)) {
-    return 'Fungsi database belum ada. Jalankan supabase/03_orders.sql & supabase/07_orders_privacy.sql di SQL Editor.';
+    return 'Fungsi database belum ada. Jalankan supabase/03_orders.sql, supabase/07_orders_privacy.sql, dan supabase/10_coupon.sql di SQL Editor.';
   }
   if (code === 'PGRST205' || code === '42P01' || /could not find the table|does not exist/i.test(raw)) {
     return 'Tabel pesanan belum ada di Supabase. Jalankan supabase/03_orders.sql & supabase/07_orders_privacy.sql di SQL Editor.';
@@ -106,7 +106,7 @@ export async function createOrder(payload) {
   const items = Array.isArray(payload.items) ? payload.items : [];
   if (items.length === 0) throw new Error('Keranjang masih kosong.');
 
-  const { data, error } = await supabase.rpc('vd_create_order', {
+  const params = {
     p_items: items.map((item) => ({
       product_id: item.product_id,
       jumlah: Math.max(1, Math.trunc(Number(item.jumlah) || 1)),
@@ -116,7 +116,17 @@ export async function createOrder(payload) {
     p_alamat: String(payload.alamat ?? '').trim(),
     p_catatan: String(payload.catatan ?? '').trim(),
     p_ongkos_kirim: Math.max(0, Math.trunc(Number(payload.ongkos_kirim) || 0)),
-  });
+  };
+
+  /*
+   * Kupon (mini-challenge) hanya dikirim bila pelanggan memang memakainya.
+   * Kode kupon divalidasi ULANG di server — bila tidak dikenal/kedaluwarsa,
+   * vd_create_order menolak seluruh pesanan (PRD 4.4).
+   */
+  const kodeKupon = String(payload.kupon ?? '').trim();
+  if (kodeKupon) params.p_kupon = kodeKupon;
+
+  const { data, error } = await supabase.rpc('vd_create_order', params);
 
   if (error) throw new Error(translateError(error, 'Gagal membuat pesanan.'));
   return mapOrder(data);

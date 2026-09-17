@@ -20,7 +20,8 @@ import { IconArrowRight, IconCart } from '../../components/common/Icons';
  */
 export function CheckoutPage() {
   const navigate = useNavigate();
-  const { items, isEmpty, subtotal, totalItems, clearCart } = useCart();
+  const { items, isEmpty, subtotal, totalItems, diskon, kupon, applyKupon, removeKupon, clearCart } =
+    useCart();
   const { ongkosKirim, settings } = useSettings();
   const { placeOrder } = useOrders();
   const { success, error } = useToast();
@@ -49,13 +50,20 @@ export function CheckoutPage() {
       const order = await placeOrder({
         ...formValues,
         ongkos_kirim: ongkosKirim,
+        kupon: kupon?.kode ?? '',
         items: items.map((item) => ({
           product_id: item.product_id,
           jumlah: item.jumlah,
         })),
       });
 
-      success(`Pesanan ${order.kode_pesanan} berhasil dibuat!`);
+      if (diskon > 0) {
+        success(
+          `Pesanan ${order.kode_pesanan} dibuat! Kupon ${order.kode_kupon || kupon?.kode} menghemat ${formatRupiah(order.diskon ?? diskon)}.`,
+        );
+      } else {
+        success(`Pesanan ${order.kode_pesanan} berhasil dibuat!`);
+      }
 
       // Keranjang dikosongkan HANYA setelah pesanan berhasil dibuat.
       // Bila checkout gagal (mis. stok kurang), isi keranjang dipertahankan
@@ -114,6 +122,9 @@ export function CheckoutPage() {
             subtotal={subtotal}
             ongkosKirim={ongkosKirim}
             totalItems={totalItems}
+            kupon={kupon}
+            onApplyKupon={applyKupon}
+            onRemoveKupon={removeKupon}
             className="mt-4"
             note={`Transfer ke ${settings.nama_bank} ${settings.nomor_rekening} a.n. ${settings.atas_nama}. Instruksi lengkap muncul setelah pesanan dibuat.`}
           />
